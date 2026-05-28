@@ -8,21 +8,30 @@ app = FastAPI(title="API de Teste Técnico")
 # Em ambiente de teste, localhost costuma ser o padrão
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
+historico = {}
+
+@app.get("/validacao")
+def texto():
+    return historico
+
 @app.get("/")
 def home():
     return {"status": "Servidor online e operante!"}
 
 @app.get("/numeropar/{id}")
-def numero_par():
+def numero_par(id):
     c = random.randint(1,100) * 2
+    historico[id] = c
     return c
 
 @app.get("/numeroimpar/{id}")
-def numero_impar():
+def numero_impar(id):
     c = random.randint(1, 100)
     if (c % 2 != 0):
+        historico[id] = c
         return c
     else:
+        historico[id] = c+1
         return c+1
 
 @app.post("/salvar")
