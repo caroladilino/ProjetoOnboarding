@@ -1,3 +1,4 @@
+import random
 from fastapi import FastAPI, HTTPException
 import redis
 
@@ -10,6 +11,19 @@ r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 @app.get("/")
 def home():
     return {"status": "Servidor online e operante!"}
+
+@app.get("/numeropar/{id}")
+def numero_par():
+    c = random.randint(1,100) * 2
+    return c
+
+@app.get("/numeroimpar/{id}")
+def numero_impar():
+    c = random.randint(1, 100)
+    if (c % 2 != 0):
+        return c
+    else:
+        return c+1
 
 @app.post("/salvar")
 def salvar_chave(key: str, value: str):
