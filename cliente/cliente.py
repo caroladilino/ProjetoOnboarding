@@ -1,8 +1,8 @@
-
 import requests
 import time
 
 BASE_URL = "http://127.0.0.1:8000"
+
 
 def executar_fluxo_teste():
     print("🚀 Iniciando testes do cliente...\n")
@@ -28,7 +28,8 @@ def executar_fluxo_teste():
     res = requests.get(f"{BASE_URL}/buscar/chave_fantasma")
     print(f"Resposta (Status {res.status_code}): {res.json()}\n")
 
+
 if __name__ == "__main__":
     # Dá um pequeno delay caso queira rodar scripts em sequência
-    time.sleep(1) 
+    time.sleep(1)
     executar_fluxo_teste()

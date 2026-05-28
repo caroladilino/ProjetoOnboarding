@@ -1,0 +1,9 @@
+[tool.ruff]
+# Define a versão do Python que você está usando (mude para a sua se for diferente)
+target-version = "py311"
+# Define o tamanho máximo de linha padrão do mercado
+line-length = 88
+
+[tool.ruff.lint]
+# Ativa regras básicas de erro (E, F) e do ecossistema (I para organizar imports)
+select = ["E", "F", "I"]
