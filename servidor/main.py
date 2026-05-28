@@ -33,6 +33,18 @@ def numero_impar(id):
     else:
         historico[id] = c+1
         return c+1
+    
+@app.get("/requisicao/{id}")
+def requisicao(id):
+    if not historico.get(id):
+        return "id não testado", 404
+    else:
+        return historico.get(id)
+
+@app.get("/salvar/{id}/{numero}")
+def salvar(id, numero):
+    historico[id] = numero
+    return "numero salvo com sucesso"
 
 @app.post("/salvar")
 def salvar_chave(key: str, value: str):
