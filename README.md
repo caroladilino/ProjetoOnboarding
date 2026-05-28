@@ -10,6 +10,7 @@ colinha para rodar em outra máquina linux:
     pip install -r requirements.txt
 
 4. rodar o servidor
+    cd servidor
     uvicorn main:app --reload
 
 5. rodar o cliente (abra outro terminal)
