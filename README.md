@@ -15,3 +15,12 @@ colinha para rodar em outra máquina linux:
 
 5. rodar o cliente (abra outro terminal)
     python client.py
+
+
+antes de dar o commit rodar comandos:
+
+ruff format
+
+ruff check --fix
+
+mypy
