@@ -12,3 +12,4 @@ select = ["E", "F", "I"]
 python_version = "3.11"  # Ajuste para a sua versão do Python se necessário
 strict = true            # Modo estrito: exige que praticamente tudo seja tipado
 ignore_missing_imports = true # Evita que ele reclame de bibliotecas sem tipagem própria
+disallow_untyped_decorators = false

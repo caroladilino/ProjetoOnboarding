@@ -23,4 +23,4 @@ ruff format
 
 ruff check --fix
 
-mypy
+mypy .

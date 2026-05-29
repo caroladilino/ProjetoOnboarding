@@ -1,15 +1,14 @@
 import random
 
 import redis
+import redis.asyncio as aioredis
 from fastapi import FastAPI, HTTPException
 
 app = FastAPI(title="API de Teste Técnico")
 
 # Conecta ao Redis (ajuste o host se necessário)
 # Em ambiente de teste, localhost costuma ser o padrão
-r = redis.Redis(host="localhost", port=6379, decode_responses=True)
-
-historico: dict[int, int] = {}
+r = aioredis.Redis(host="localhost", port=6379, decode_responses=True)
 
 
 @app.get("/")
@@ -18,49 +17,58 @@ def home() -> dict[str, str]:
 
 
 @app.get("/validacao")
-def texto() -> dict[int, int]:
-    return historico
+async def texto() -> dict[str, int | dict[str, int]]:
+    chaves = await r.keys("numero:*")
+    dados_internos = {}
+
+    for chave in chaves:
+        valor = await r.get(chave)
+        if valor is not None:
+            dados_internos[chave] = int(valor)
+
+    return {"total_chaves": len(chaves), "dados": dados_internos}
 
 
 @app.get("/numeropar/{id}")
-def numero_par(id: int) -> int:
+async def numero_par(id: int) -> int:
     c = random.randint(1, 100) * 2
-    historico[id] = c
+
+    await r.set(f"numero:{id}", c, ex=3600)
+
+    # historico[id] = c
     return c
 
 
 @app.get("/numeroimpar/{id}")
-def numero_impar(id: int) -> int:
-    c = random.randint(1, 100)
-    if c % 2 != 0:
-        historico[id] = c
-        return c
-    else:
-        historico[id] = c + 1
-        return c + 1
+async def numero_impar(id: int) -> int:
+    c = random.randint(1, 100) * 2 + 1
+    await r.set(f"numero:{id}", c, ex=3600)
+    return c
 
 
 @app.get("/requisicao/{id}")
-def requisicao(id: int) -> int:
-    valor = historico.get(id)
+async def requisicao(id: int) -> int:
+
+    valor = await r.get(f"numero:{id}")
 
     if valor is None:
         raise HTTPException(status_code=404, detail="id não testado")
 
-    return valor
+    return int(valor)
 
 
 @app.get("/salvar/{id}/{numero}")
-def salvar(id: int, numero: int) -> str:
-    historico[id] = numero
+async def salvar(id: int, numero: int) -> str:
+    await r.set(f"numero:{id}", numero, ex=3600)
     return "numero salvo com sucesso"
 
 
+# funções que interagem com o arquivo cliente, ajeitar depois
 @app.post("/salvar")
-def salvar_chave(key: str, value: str) -> dict[str, str]:
+async def salvar_chave(key: str, value: str) -> dict[str, str]:  # 1. Adicionado 'async'
     try:
-        # Salva no Redis com um tempo de expiração (TTL) de 10 minutos
-        r.set(key, value, ex=600)
+        # 2. Adicionado 'await' aqui
+        await r.set(key, value, ex=600)
         return {"mensagem": f"Chave '{key}' salva com sucesso!"}
     except redis.ConnectionError:
         raise HTTPException(
