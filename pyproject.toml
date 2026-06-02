@@ -13,3 +13,17 @@ python_version = "3.11"  # Ajuste para a sua versão do Python se necessário
 strict = true            # Modo estrito: exige que praticamente tudo seja tipado
 ignore_missing_imports = true # Evita que ele reclame de bibliotecas sem tipagem própria
 disallow_untyped_decorators = false
+
+[project]
+name = "meu-projeto"
+version = "0.1.0"
+dependencies = [
+    "fastapi>=0.136.3",
+    "mypy>=2.1.0",
+    "nats-py>=2.14.0",
+    "redis>=8.0.0",
+    "requests>=2.34.2",
+    "ruff>=0.15.15",
+    "uvicorn>=0.48.0",
+]
+requires-python = ">=3.11"

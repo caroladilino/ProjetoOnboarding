@@ -1,13 +1,30 @@
-import random
+import json
+from contextlib import asynccontextmanager
+from typing import Any, AsyncGenerator
 
+import nats
 import redis
 import redis.asyncio as aioredis
 from fastapi import FastAPI, HTTPException
 
-app = FastAPI(title="API de Teste Técnico")
+# guardar a conexão do nats em um dicionário global para que todas as rotas enham acesso
+estado_app: dict[str, Any] = {}
 
-# Conecta ao Redis (ajuste o host se necessário)
-# Em ambiente de teste, localhost costuma ser o padrão
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    # Executa ao ligar a API: Conecta ao NATS uma única vez
+    nc = await nats.connect("nats://localhost:4222")
+    estado_app["nats_cliente"] = nc
+
+    yield
+
+    await nc.close()
+
+
+app = FastAPI(title="API de Teste Técnico", lifespan=lifespan)
+
+# Conecta ao Redis
 r = aioredis.Redis(host="localhost", port=6379, decode_responses=True)
 
 
@@ -30,20 +47,37 @@ async def texto() -> dict[str, int | dict[str, int]]:
 
 
 @app.get("/numeropar/{id}")
-async def numero_par(id: int) -> int:
-    c = random.randint(1, 100) * 2
+async def numero_par(id: int) -> dict[str, int]:
+    # pega a conexão do NATS que guardamos no dicionário lá em cima
+    nc = estado_app["nats_cliente"]
 
-    await r.set(f"numero:{id}", c, ex=3600)
+    # prepara os dados que vamos enviar no msg
+    payload = {"id": id}
 
-    # historico[id] = c
-    return c
+    # Envia o pedido para o tópico "numeros.par" e ESPERA (request) a resposta.
+    resposta_nats = await nc.request(
+        "numeros.par", json.dumps(payload).encode(), timeout=2
+    )
+
+    # transforma a resposta em um dicionário e retorna
+    dados_resposta: dict[str, int] = json.loads(resposta_nats.data.decode())
+
+    return dados_resposta
 
 
 @app.get("/numeroimpar/{id}")
-async def numero_impar(id: int) -> int:
-    c = random.randint(1, 100) * 2 + 1
-    await r.set(f"numero:{id}", c, ex=3600)
-    return c
+async def numero_impar(id: int) -> dict[str, int]:
+    nc = estado_app["nats_cliente"]
+
+    payload = {"id": id}
+
+    resposta_nats = await nc.request(
+        "numeros.impar", json.dumps(payload).encode(), timeout=2
+    )
+
+    dados_resposta: dict[str, int] = json.loads(resposta_nats.data.decode())
+
+    return dados_resposta
 
 
 @app.get("/requisicao/{id}")

@@ -6,9 +6,6 @@ colinha para rodar em outra máquina linux:
 2. abra o ambiente virtual
     source .venv/bin/activate
 
-3. instalar os pacotes que vamos usar
-    uv pip install -r requirements.txt
-
 4. rodar o servidor
     cd servidor
     uvicorn main:app --reload
