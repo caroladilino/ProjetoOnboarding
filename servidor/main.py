@@ -87,7 +87,7 @@ async def requisicao(id: int) -> int:
     payload = {"id": id}
 
     resposta_nats = await nc.request(
-        "requisicao", json.dumps(payload).encode(), timeout=2
+        "requisicao.numero", json.dumps(payload).encode(), timeout=2
     )
 
     dados_recebidos = json.loads(resposta_nats.data.decode())
@@ -102,7 +102,13 @@ async def requisicao(id: int) -> int:
 
 @app.get("/salvar/{id}/{numero}")
 async def salvar(id: int, numero: int) -> str:
-    await r.set(f"numero:{id}", numero, ex=3600)
+    nc = estado_app["nats_cliente"]
+
+    payload = {"id": id, "numero": numero}
+
+    await nc.request(
+        "salvar.numero", json.dumps(payload).encode(), timeout=2
+    )
     return "numero salvo com sucesso"
 
 

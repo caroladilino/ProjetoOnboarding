@@ -52,6 +52,19 @@ async def lidar_com_requisicao(msg: Msg) -> None:
 
     await msg.respond(json.dumps(resposta).encode())
 
+async def lidar_com_salvar(msg: Msg) -> None:
+    dados_recebidos = json.loads(msg.data.decode())
+    id_requisicao = dados_recebidos.get("id")
+    numero_requisicao = dados_recebidos.get("numero")
+
+    r = estado_servico["redis_cliente"]
+
+    await r.set(f"numero:{id_requisicao}", numero_requisicao, ex=3600)
+    print("número salvo")
+
+    await msg.respond(b"OK")
+
+
 
 async def main() -> None:
     r_cliente = redis.Redis(host="localhost", port=6379, decode_responses=True)
@@ -62,7 +75,8 @@ async def main() -> None:
 
     await nc.subscribe("numeros.par", cb=lidar_com_pedido_par)
     await nc.subscribe("numeros.impar", cb=lidar_com_pedido_impar)
-    await nc.subscribe("requisicao", cb=lidar_com_requisicao)
+    await nc.subscribe("requisicao.numero", cb=lidar_com_requisicao)
+    await nc.subscribe("salvar.numero", cb=lidar_com_salvar)
 
     while True:
         await asyncio.sleep(1)
