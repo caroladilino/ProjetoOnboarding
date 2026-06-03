@@ -9,6 +9,26 @@ from nats.aio.msg import Msg
 
 estado_servico: dict[str, Any] = {}
 
+async def lidar_com_validacao(msg: Msg) -> None:
+    r = estado_servico["redis_cliente"]
+
+    chaves = await r.keys("numero:*")
+    dados_internos = {}
+
+    for chave in chaves:
+        valor = await r.get(chave)
+        if valor is not None:
+            dados_internos[chave] = int(valor)
+
+    resposta = {
+        "total_chaves": len(chaves), 
+        "dados": dados_internos
+    }
+
+    print("Validação do cache processada e enviada!")
+
+    await msg.respond(json.dumps(resposta).encode())
+
 
 async def lidar_com_pedido_par(msg: Msg) -> None:
     dados_recebidos = json.loads(msg.data.decode())
@@ -73,6 +93,7 @@ async def main() -> None:
 
     nc = await nats.connect("nats://localhost:4222")
 
+    await nc.subscribe("validar", cb=lidar_com_validacao)
     await nc.subscribe("numeros.par", cb=lidar_com_pedido_par)
     await nc.subscribe("numeros.impar", cb=lidar_com_pedido_impar)
     await nc.subscribe("requisicao.numero", cb=lidar_com_requisicao)

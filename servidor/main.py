@@ -35,15 +35,21 @@ def home() -> dict[str, str]:
 
 @app.get("/validacao")
 async def texto() -> dict[str, int | dict[str, int]]:
-    chaves = await r.keys("numero:*")
-    dados_internos = {}
+    nc = estado_app["nats_cliente"]
 
-    for chave in chaves:
-        valor = await r.get(chave)
-        if valor is not None:
-            dados_internos[chave] = int(valor)
+    # Como não precisamos mandar nenhum dado (só queremos listar tudo), 
+    # enviamos um JSON vazio como payload
+    payload = {}
 
-    return {"total_chaves": len(chaves), "dados": dados_internos}
+    # Faz o pedido ao microsserviço via NATS
+    resposta_nats = await nc.request(
+        "validar", json.dumps(payload).encode(), timeout=2
+    )
+
+    # Decodifica a resposta vinda do microsserviço
+    dados_resposta = json.loads(resposta_nats.data.decode())
+
+    return dados_resposta
 
 
 @app.get("/numeropar/{id}")
@@ -111,33 +117,3 @@ async def salvar(id: int, numero: int) -> str:
     )
     return "numero salvo com sucesso"
 
-
-# funções que interagem com o arquivo cliente, ajeitar depois
-@app.post("/salvar")
-async def salvar_chave(key: str, value: str) -> dict[str, str]:  # 1. Adicionado 'async'
-    try:
-        # 2. Adicionado 'await' aqui
-        await r.set(key, value, ex=600)
-        return {"mensagem": f"Chave '{key}' salva com sucesso!"}
-    except redis.ConnectionError:
-        raise HTTPException(
-            status_code=500, detail="Não foi possível conectar ao Redis"
-        )
-
-
-@app.get("/buscar/{key}")
-def buscar_chave(key: str) -> dict[str, str]:
-    try:
-        value = r.get(key)
-        if value is None:
-            raise HTTPException(
-                status_code=404, detail="Chave não encontrada ou expirada"
-            )
-
-        valor_str: str = str(value)
-
-        return {"chave": key, "valor": valor_str}
-    except redis.ConnectionError:
-        raise HTTPException(
-            status_code=500, detail="Não foi possível conectar ao Redis"
-        )
