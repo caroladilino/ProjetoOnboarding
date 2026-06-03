@@ -82,8 +82,17 @@ async def numero_impar(id: int) -> dict[str, int]:
 
 @app.get("/requisicao/{id}")
 async def requisicao(id: int) -> int:
+    nc = estado_app["nats_cliente"]
 
-    valor = await r.get(f"numero:{id}")
+    payload = {"id": id}
+
+    resposta_nats = await nc.request(
+        "requisicao", json.dumps(payload).encode(), timeout=2
+    )
+
+    dados_recebidos = json.loads(resposta_nats.data.decode())
+
+    valor = dados_recebidos.get("numero")
 
     if valor is None:
         raise HTTPException(status_code=404, detail="id não testado")

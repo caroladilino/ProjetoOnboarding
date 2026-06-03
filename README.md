@@ -1,17 +1,24 @@
-colinha para rodar em outra máquina linux:
+colinha para rodar
 
-1. comando para criar o ambiente virtual 
-    uv venv
+Terminal 0
+    sudo systemctl start redis-server
+    -- ligar o REDIS
 
-2. abra o ambiente virtual
-    source .venv/bin/activate
+Terminal 1
+    nats-server
+    -- servidor nats
 
-4. rodar o servidor
+Terminal 2
     cd servidor
-    uvicorn main:app --reload
+    source ../.venv/bin/activate
+    python servico_numeros.py
+    -- na pasta servidor ligar o ambiente virtual e rodar o arquivo dos serviços
 
-5. rodar o cliente (abra outro terminal)
-    python client.py
+Terminal 3
+    cd servidor
+    source ../.venv/bin/activate
+    uvicorn main:app --reload
+    -- na pasta servidor, ligar o ambiente virtual e rodar o main
 
 
 antes de dar o commit rodar comandos:
