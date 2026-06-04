@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
 import nats
-import redis
 import redis.asyncio as aioredis
 from fastapi import FastAPI, HTTPException
 
@@ -13,12 +12,11 @@ estado_app: dict[str, Any] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    # Executa ao ligar a API: Conecta ao NATS uma única vez
+    # quando liga a api vai se conectar ao nats (uma vez só)
     nc = await nats.connect("nats://localhost:4222")
     estado_app["nats_cliente"] = nc
 
     yield
-
     await nc.close()
 
 
@@ -37,17 +35,11 @@ def home() -> dict[str, str]:
 async def texto() -> dict[str, int | dict[str, int]]:
     nc = estado_app["nats_cliente"]
 
-    # Como não precisamos mandar nenhum dado (só queremos listar tudo), 
-    # enviamos um JSON vazio como payload
-    payload = {}
+    resposta_nats = await nc.request("validar", json.dumps(None).encode(), timeout=2)
 
-    # Faz o pedido ao microsserviço via NATS
-    resposta_nats = await nc.request(
-        "validar", json.dumps(payload).encode(), timeout=2
+    dados_resposta: dict[str, int | dict[str, int]] = json.loads(
+        resposta_nats.data.decode()
     )
-
-    # Decodifica a resposta vinda do microsserviço
-    dados_resposta = json.loads(resposta_nats.data.decode())
 
     return dados_resposta
 
@@ -60,7 +52,7 @@ async def numero_par(id: int) -> dict[str, int]:
     # prepara os dados que vamos enviar no msg
     payload = {"id": id}
 
-    # Envia o pedido para o tópico "numeros.par" e ESPERA (request) a resposta.
+    # envia o msg e espera a resposta
     resposta_nats = await nc.request(
         "numeros.par", json.dumps(payload).encode(), timeout=2
     )
@@ -112,8 +104,5 @@ async def salvar(id: int, numero: int) -> str:
 
     payload = {"id": id, "numero": numero}
 
-    await nc.request(
-        "salvar.numero", json.dumps(payload).encode(), timeout=2
-    )
+    await nc.request("salvar.numero", json.dumps(payload).encode(), timeout=2)
     return "numero salvo com sucesso"
-
