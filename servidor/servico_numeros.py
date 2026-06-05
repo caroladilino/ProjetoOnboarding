@@ -23,14 +23,14 @@ async def lidar_com_validacao(msg: Msg) -> None:
             if valor is not None:
                 dados_internos[chave] = int(valor)
 
-    #montar a mensagem que vamos mandar pra auditoria (redis streaming)
+    # montar a mensagem que vamos mandar pra auditoria (redis streaming)
     dados_evento = {
-    "acao": "validaçao",
-    "id_requisicao": "não consta",
-    "valor": "não consta"
-    }   
+        "acao": "validaçao",
+        "id_requisicao": "não consta",
+        "valor": "não consta",
+    }
 
-    #mandar pra auditoria
+    # mandar pra auditoria
     await r.xadd("stream:auditoria", dados_evento, id="*")
     print("mandou pro redis streaming")
 
@@ -49,14 +49,14 @@ async def lidar_com_pedido_par(msg: Msg) -> None:
 
     await r.set(f"numero:{id_requisicao}", numero_gerado, ex=3600)
 
-    #montar a mensagem que vamos mandar pra auditoria (redis streaming)
+    # montar a mensagem que vamos mandar pra auditoria (redis streaming)
     dados_evento = {
-    "acao": "gerou_numero_par",
-    "id_requisicao": str(id_requisicao),
-    "valor": str(numero_gerado)
-    }   
+        "acao": "gerou_numero_par",
+        "id_requisicao": str(id_requisicao),
+        "valor": str(numero_gerado),
+    }
 
-    #mandar pra auditoria
+    # mandar pra auditoria
     await r.xadd("stream:auditoria", dados_evento, id="*")
     print("mandou pro redis streaming")
 
@@ -74,18 +74,18 @@ async def lidar_com_pedido_impar(msg: Msg) -> None:
     numero_gerado = random.randint(1, 100) * 2 + 1
 
     await r.set(f"numero:{id_requisicao}", numero_gerado, ex=3600)
-    
-    #montar a mensagem que vamos mandar pra auditoria (redis streaming)
-    dados_evento = {
-    "acao": "gerou_numero_impar",
-    "id_requisicao": str(id_requisicao),
-    "valor": str(numero_gerado)
-    }   
 
-    #mandar pra auditoria
+    # montar a mensagem que vamos mandar pra auditoria (redis streaming)
+    dados_evento = {
+        "acao": "gerou_numero_impar",
+        "id_requisicao": str(id_requisicao),
+        "valor": str(numero_gerado),
+    }
+
+    # mandar pra auditoria
     await r.xadd("stream:auditoria", dados_evento, id="*")
     print("mandou pro redis streaming")
-    
+
     resposta = {"id": id_requisicao, "numero": numero_gerado}
     print("numero impar gerado! uhul")
     await msg.respond(json.dumps(resposta).encode())
@@ -102,14 +102,14 @@ async def lidar_com_requisicao(msg: Msg) -> None:
 
     print("número checado")
 
-    #montar a mensagem que vamos mandar pra auditoria (redis streaming)
+    # montar a mensagem que vamos mandar pra auditoria (redis streaming)
     dados_evento = {
-    "acao": "requisição_de_número_pela_id",
-    "id_requisicao": str(id_requisicao),
-    "valor": str(valor)
-    }   
+        "acao": "requisição_de_número_pela_id",
+        "id_requisicao": str(id_requisicao),
+        "valor": str(valor),
+    }
 
-    #mandar pra auditoria
+    # mandar pra auditoria
     await r.xadd("stream:auditoria", dados_evento, id="*")
     print("mandou pro redis streaming")
 
@@ -126,14 +126,14 @@ async def lidar_com_salvar(msg: Msg) -> None:
     await r.set(f"numero:{id_requisicao}", numero_requisicao, ex=3600)
     print("número salvo")
 
-    #montar a mensagem que vamos mandar pra auditoria (redis streaming)
+    # montar a mensagem que vamos mandar pra auditoria (redis streaming)
     dados_evento = {
-    "acao": "salvou_número",
-    "id_requisicao": str(id_requisicao),
-    "valor": str(numero_requisicao)
-    }   
+        "acao": "salvou_número",
+        "id_requisicao": str(id_requisicao),
+        "valor": str(numero_requisicao),
+    }
 
-    #mandar pra auditoria
+    # mandar pra auditoria
     await r.xadd("stream:auditoria", dados_evento, id="*")
     print("mandou pro redis streaming")
 
