@@ -1,4 +1,4 @@
-colinha para rodar
+colinha para rodar o projeto
 
 Terminal 0
     sudo systemctl start redis-server
@@ -19,6 +19,11 @@ Terminal 3
     source ../.venv/bin/activate
     uvicorn main:app --reload
     -- na pasta servidor, ligar o ambiente virtual e rodar o main
+
+Terminal 4
+    source ../.venv/bin/activate
+    cd servidor
+    python worker_auditoria.py
 
 
 antes de dar o commit rodar comandos:

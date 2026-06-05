@@ -38,6 +38,17 @@ async def lidar_com_pedido_par(msg: Msg) -> None:
 
     await r.set(f"numero:{id_requisicao}", numero_gerado, ex=3600)
 
+    #montar a mensagem que vamos mandar pra auditoria (redis streaming)
+    dados_evento = {
+    "acao": "gerou_numero_par",
+    "id_requisicao": str(id_requisicao),
+    "valor": str(numero_gerado)
+    }   
+
+    #mandar pra auditoria
+    await r.xadd("stream:auditoria", dados_evento, id="*")
+    print("mandou pro redis streaming")
+
     resposta = {"id": id_requisicao, "numero": numero_gerado}
     print("numero par gerado! uhul")
 
