@@ -1,30 +1,32 @@
-colinha para rodar
+# cheatsheet to run the code
 
-Terminal 0
-    sudo systemctl start redis-server
-    -- ligar o REDIS
 
-Terminal 1
+### Terminal 1
+
+start nats server
+
     nats-server
-    -- servidor nats
 
-Terminal 2
-    cd servidor
-    source ../.venv/bin/activate
-    python servico_numeros.py
-    -- na pasta servidor ligar o ambiente virtual e rodar o arquivo dos serviços
+### Terminal 2
 
-Terminal 3
-    cd servidor
+turn on the api
+
+    cd API
     source ../.venv/bin/activate
     uvicorn main:app --reload
-    -- na pasta servidor, ligar o ambiente virtual e rodar o main
 
+### Terminal 3..n 
 
-antes de dar o commit rodar comandos:
+run each service in a dedicated terminal
 
-ruff format
+    cd desired_folder
+    uv run service.py
 
-ruff check --fix
+<br>
+<br>
 
-mypy .
+# before commiting:
+
+    ruff format
+    ruff check --fix
+    mypy .
