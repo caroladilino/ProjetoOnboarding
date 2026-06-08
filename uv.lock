@@ -50,7 +50,7 @@ wheels = [
 [[package]]
 name = "api"
 version = "0.1.0"
-source = { virtual = "API" }
+source = { virtual = "api" }
 dependencies = [
     { name = "nats-py" },
     { name = "redis" },
