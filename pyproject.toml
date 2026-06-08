@@ -23,7 +23,7 @@ members = [
     "odd",
     "save",
     "check",
-    "API",
+    "api",
 ]
 
 [project]
