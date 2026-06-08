@@ -7,28 +7,28 @@ import nats
 import redis.asyncio as redis
 from nats.aio.msg import Msg
 
-estado_servico: dict[str, Any] = {}
+service_state: dict[str, Any] = {}
 
-async def lidar_com_salvar(msg: Msg) -> None:
-    dados_recebidos = json.loads(msg.data.decode())
-    id_requisicao = dados_recebidos.get("id")
-    numero_requisicao = dados_recebidos.get("numero")
+async def save_number(msg: Msg) -> None:
+    received_data = json.loads(msg.data.decode())
+    requested_id = received_data.get("id")
+    requested_number = received_data.get("number")
 
-    r = estado_servico["redis_cliente"]
+    r = service_state["redis_client"]
 
-    await r.set(f"numero:{id_requisicao}", numero_requisicao, ex=3600)
-    print("número salvo")
+    await r.set(f"number:{requested_id}", requested_number, ex=3600)
+    print("number was saved")
 
     await msg.respond(b"OK")
 
 async def main() -> None:
-    r_cliente = redis.Redis(host="localhost", port=6379, decode_responses=True)
-    estado_servico["redis_cliente"] = r_cliente
-    print("[Serviço Números] Conectado ao Redis com sucesso!")
+    r_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
+    service_state["redis_client"] = r_client
+    print("[SAVE] connected to redis")
 
     nc = await nats.connect("nats://localhost:4222")
 
-    await nc.subscribe("salvar.numero", cb=lidar_com_salvar)
+    await nc.subscribe("save.number", cb=save_number)
 
     while True:
         await asyncio.sleep(1)
