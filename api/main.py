@@ -6,13 +6,13 @@ import nats
 import redis.asyncio as aioredis
 from fastapi import FastAPI, HTTPException
 
-# save the connection in a global dictionary so that all variables have access
+# Save the connection in a global dictionary so that all variables have access
 app_state: dict[str, Any] = {}
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    # only connects to the nats server once and saves the connection in the global dict
+    # Only connects to the nats server once and saves the connection in the global dict
     nc = await nats.connect("nats://localhost:4222")
     app_state["nats_client"] = nc
 
@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(title="Onboarding Project API", lifespan=lifespan)
 
-# connects to REDIS
+# Connects to REDIS
 r = aioredis.Redis(host="localhost", port=6379, decode_responses=True)
 
 

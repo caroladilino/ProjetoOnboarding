@@ -1,15 +1,15 @@
-# cheatsheet to run the code
+# Cheatsheet to run the code
 
 
 ### Terminal 1
 
-start nats server
+Start nats server
 
     nats-server
 
 ### Terminal 2
 
-turn on the api
+Turn on the api
 
     cd API
     source ../.venv/bin/activate
@@ -17,7 +17,7 @@ turn on the api
 
 ### Terminal 3..n 
 
-run each service in a dedicated terminal
+Run each service in a dedicated terminal
 
     cd desired_folder
     uv run service.py
@@ -25,7 +25,7 @@ run each service in a dedicated terminal
 <br>
 <br>
 
-# before commiting:
+# Before commiting:
 
     ruff format
     ruff check --fix
