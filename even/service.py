@@ -7,31 +7,31 @@ import nats
 import redis.asyncio as redis
 from nats.aio.msg import Msg
 
-estado_servico: dict[str, Any] = {}
+service_state: dict[str, Any] = {}
 
-async def lidar_com_pedido_par(msg: Msg) -> None:
-    dados_recebidos = json.loads(msg.data.decode())
-    id_requisicao = dados_recebidos.get("id")
+async def even_number_request(msg: Msg) -> None:
+    data_received = json.loads(msg.data.decode())
+    requested_id = data_received.get("id")
 
-    r = estado_servico["redis_cliente"]
+    r = service_state["redis_client"]
 
-    numero_gerado = random.randint(1, 100) * 2
+    generated_number = random.randint(1, 100) * 2
 
-    await r.set(f"numero:{id_requisicao}", numero_gerado, ex=3600)
+    await r.set(f"number:{requested_id}", generated_number, ex=3600)
 
-    resposta = {"id": id_requisicao, "numero": numero_gerado}
-    print("numero par gerado! uhul")
+    answer = {"id": requested_id, "number": generated_number}
+    print("even number generated")
 
-    await msg.respond(json.dumps(resposta).encode())
+    await msg.respond(json.dumps(answer).encode())
 
 async def main() -> None:
-    r_cliente = redis.Redis(host="localhost", port=6379, decode_responses=True)
-    estado_servico["redis_cliente"] = r_cliente
-    print("[Serviço Números] Conectado ao Redis com sucesso!")
+    r_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
+    service_state["redis_client"] = r_client
+    print("[EVEN] connected to redis")
 
     nc = await nats.connect("nats://localhost:4222")
 
-    await nc.subscribe("numeros.par", cb=lidar_com_pedido_par)
+    await nc.subscribe("number.even", cb=even_number_request)
 
     while True:
         await asyncio.sleep(1)
