@@ -1,6 +1,5 @@
 import asyncio
 import json
-import random
 from typing import Any
 
 import nats
@@ -8,6 +7,7 @@ import redis.asyncio as redis
 from nats.aio.msg import Msg
 
 service_state: dict[str, Any] = {}
+
 
 async def check_number(msg: Msg) -> None:
     data_received = json.loads(msg.data.decode())
@@ -31,7 +31,6 @@ async def main() -> None:
     nc = await nats.connect("nats://localhost:4222")
 
     await nc.subscribe("check.number", cb=check_number)
-
 
     while True:
         await asyncio.sleep(1)

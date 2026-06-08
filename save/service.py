@@ -1,6 +1,5 @@
 import asyncio
 import json
-import random
 from typing import Any
 
 import nats
@@ -8,6 +7,7 @@ import redis.asyncio as redis
 from nats.aio.msg import Msg
 
 service_state: dict[str, Any] = {}
+
 
 async def save_number(msg: Msg) -> None:
     received_data = json.loads(msg.data.decode())
@@ -20,6 +20,7 @@ async def save_number(msg: Msg) -> None:
     print("number was saved")
 
     await msg.respond(b"OK")
+
 
 async def main() -> None:
     r_client = redis.Redis(host="localhost", port=6379, decode_responses=True)

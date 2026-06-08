@@ -9,6 +9,7 @@ from nats.aio.msg import Msg
 
 service_state: dict[str, Any] = {}
 
+
 async def odd_number_request(msg: Msg) -> None:
     received_data = json.loads(msg.data.decode())
     requested_id = received_data.get("id")
@@ -20,6 +21,7 @@ async def odd_number_request(msg: Msg) -> None:
     answer = {"id": requested_id, "number": generated_number}
     print("odd number generated")
     await msg.respond(json.dumps(answer).encode())
+
 
 async def main() -> None:
     r_client = redis.Redis(host="localhost", port=6379, decode_responses=True)

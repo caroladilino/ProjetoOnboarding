@@ -12,7 +12,7 @@ app_state: dict[str, Any] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    # only connects to the nats server once and saves the connection in the global dictionary
+    # only connects to the nats server once and saves the connection in the global dict
     nc = await nats.connect("nats://localhost:4222")
     app_state["nats_client"] = nc
 

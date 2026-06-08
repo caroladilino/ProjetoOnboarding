@@ -14,13 +14,15 @@ strict = true            # Modo estrito: exige que praticamente tudo seja tipado
 ignore_missing_imports = true # Evita que ele reclame de bibliotecas sem tipagem própria
 disallow_untyped_decorators = false
 
+explicit_package_bases = true
+namespace_packages = true
+
 [tool.uv.workspace]
 members = [
     "even",
     "odd",
     "save",
     "check",
-    "history",
     "API",
 ]
 

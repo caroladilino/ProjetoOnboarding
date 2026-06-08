@@ -9,6 +9,7 @@ from nats.aio.msg import Msg
 
 service_state: dict[str, Any] = {}
 
+
 async def even_number_request(msg: Msg) -> None:
     data_received = json.loads(msg.data.decode())
     requested_id = data_received.get("id")
@@ -23,6 +24,7 @@ async def even_number_request(msg: Msg) -> None:
     print("even number generated")
 
     await msg.respond(json.dumps(answer).encode())
+
 
 async def main() -> None:
     r_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
