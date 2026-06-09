@@ -24,6 +24,7 @@ members = [
     "save",
     "check",
     "api",
+    "logger",
 ]
 
 [project]
