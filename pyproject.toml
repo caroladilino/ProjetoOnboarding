@@ -27,7 +27,7 @@ members = [
 ]
 
 [project]
-name = "meu-projeto"
+name = "onboarding-carolina"
 version = "0.1.0"
 dependencies = [
     "fastapi>=0.136.3",
