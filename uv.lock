@@ -11,7 +11,9 @@ members = [
     "api",
     "check",
     "even",
+    "logger",
     "odd",
+    "onboarding-carolina",
     "save",
 ]
 
@@ -367,29 +369,9 @@ wheels = [
 ]
 
 [[package]]
-name = "meu-projeto"
+name = "logger"
 version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "fastapi" },
-    { name = "mypy" },
-    { name = "nats-py" },
-    { name = "redis" },
-    { name = "requests" },
-    { name = "ruff" },
-    { name = "uvicorn" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.136.3" },
-    { name = "mypy", specifier = ">=2.1.0" },
-    { name = "nats-py", specifier = ">=2.14.0" },
-    { name = "redis", specifier = ">=8.0.0" },
-    { name = "requests", specifier = ">=2.34.2" },
-    { name = "ruff", specifier = ">=0.15.15" },
-    { name = "uvicorn", specifier = ">=0.48.0" },
-]
+source = { virtual = "logger" }
 
 [[package]]
 name = "mypy"
@@ -473,6 +455,31 @@ dependencies = [
 requires-dist = [
     { name = "nats-py", specifier = ">=2.14.0" },
     { name = "redis", specifier = ">=8.0.0" },
+]
+
+[[package]]
+name = "onboarding-carolina"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "fastapi" },
+    { name = "mypy" },
+    { name = "nats-py" },
+    { name = "redis" },
+    { name = "requests" },
+    { name = "ruff" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.136.3" },
+    { name = "mypy", specifier = ">=2.1.0" },
+    { name = "nats-py", specifier = ">=2.14.0" },
+    { name = "redis", specifier = ">=8.0.0" },
+    { name = "requests", specifier = ">=2.34.2" },
+    { name = "ruff", specifier = ">=0.15.15" },
+    { name = "uvicorn", specifier = ">=0.48.0" },
 ]
 
 [[package]]

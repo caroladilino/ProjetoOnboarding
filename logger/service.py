@@ -18,7 +18,7 @@ async def request_logger() -> None:
 
         for this_stream, messages in result:
             for msg_id, data in messages:
-                print(f"\n [DETECTED EVENT - {msg_id}]")
+                print(f"\n [DETECTED EVENT - CODE {msg_id}]")
                 print(f"Request: {data.get('action')}")
                 print(f"ID: {data.get('id_of_request')}")
                 print(f"Generated value: {data.get('value')}")
