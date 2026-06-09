@@ -30,8 +30,6 @@ async def even_number_request(msg: Msg) -> None:
     await r.xadd("stream:logger", data_to_send, id="*")
     print("Message sent")
 
-
-
     answer = {"id": requested_id, "number": generated_number}
     print("even number generated")
 

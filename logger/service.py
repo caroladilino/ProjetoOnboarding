@@ -12,9 +12,7 @@ async def request_logger() -> None:
     print("Logger working")
 
     while True:
-        result = await r.xread(
-            {"stream:logger": last_id}, count=1, block=0
-        )
+        result = await r.xread({"stream:logger": last_id}, count=1, block=0)
 
         for this_stream, messages in result:
             for msg_id, data in messages:

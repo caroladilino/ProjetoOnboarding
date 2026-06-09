@@ -19,6 +19,16 @@ async def save_number(msg: Msg) -> None:
     await r.set(f"number:{requested_id}", requested_number, ex=3600)
     print("number was saved")
 
+    # Sending message to REDIS Stream
+    data_to_send = {
+        "action": "saving_number",
+        "id_of_request": str(requested_id),
+        "value": str(requested_number),
+    }
+
+    await r.xadd("stream:logger", data_to_send, id="*")
+    print("Message sent")
+
     await msg.respond(b"OK")
 
 

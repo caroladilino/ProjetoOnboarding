@@ -18,6 +18,17 @@ async def odd_number_request(msg: Msg) -> None:
     generated_number = random.randint(1, 100) * 2 + 1
 
     await r.set(f"number:{requested_id}", generated_number, ex=3600)
+
+    # Sending message to REDIS Stream
+    data_to_send = {
+        "action": "generate_odd_number",
+        "id_of_request": str(requested_id),
+        "value": str(generated_number),
+    }
+
+    await r.xadd("stream:logger", data_to_send, id="*")
+    print("Message sent")
+
     answer = {"id": requested_id, "number": generated_number}
     print("odd number generated")
     await msg.respond(json.dumps(answer).encode())

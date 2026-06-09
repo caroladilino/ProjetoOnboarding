@@ -20,6 +20,16 @@ async def check_number(msg: Msg) -> None:
 
     print("number was checked")
 
+    # Sending message to REDIS Stream
+    data_to_send = {
+        "action": "saving_number",
+        "id_of_request": str(requested_id),
+        "value": str(value),
+    }
+
+    await r.xadd("stream:logger", data_to_send, id="*")
+    print("Message sent")
+
     await msg.respond(json.dumps(answer).encode())
 
 
