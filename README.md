@@ -15,15 +15,13 @@ Turn on the api
     source ../.venv/bin/activate
     uvicorn main:app --reload
 
-### Terminal 3..n 
+### Open a new terminal for each service
 
 Run each service in a dedicated terminal
 
     cd desired_folder
     uv run service.py
 
-<br>
-<br>
 
 # Before commiting:
 
