@@ -1,0 +1,25 @@
+image: python:3.11
+
+clone:
+  depth: full
+
+definitions:
+  services:
+    docker-2x:
+      memory: 4096
+      type: docker
+  steps:
+    - step: &commit-check
+        name: commit-check
+        script:
+          - REFERENCE=$BITBUCKET_PR_DESTINATION_COMMIT BRANCH=$BITBUCKET_COMMIT sh resources/development/check-commits.sh
+    - step: &merge-into
+        name: merge-into
+        script:
+          - git merge --no-commit --no-ff origin/main
+
+pipelines:
+  pull-requests:
+    "**":
+      - step: *commit-check
+      - step: *merge-into
